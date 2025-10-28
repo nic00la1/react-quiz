@@ -1,35 +1,84 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useEffect, useState } from "react";
+import GameOver from "./components/game-over";
+import QuestionCard from "./components/question-card";
+import StartScreen from "./components/start-screen";
+import { QUESTIONS } from "./data/questions";
+import Timer from "./components/timer";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [gameState, setGameState] = useState("start");
+  const [selectedAnswer, setSelectedAnswer] = useState(null);
+  const [currentQuestion, setCurrentQuestion] = useState(0);
+  const [score, setScore] = useState(0);
+  const [timeLeft, setTimeLeft] = useState(30);
+
+  useEffect(() => {
+  let timer;
+    if (gameState === "playing" && timeLeft > 0) {
+      timer = setInterval(() => {
+        setTimeLeft((prev) => prev - 1);
+      }, 1000);
+    } else if (timeLeft === 0 && gameState === "playing") {
+      setGameState("end");
+    }
+    return () => clearInterval(timer);
+  }, [timeLeft, gameState]);
+
+  const handleStart = () => {
+    setGameState("playing");
+    setTimeLeft(30);
+    setScore(0);
+    setCurrentQuestion(0);
+    setSelectedAnswer(null);
+  };
+
+  const handleAnswer = (index) => {
+    setSelectedAnswer(index);
+    const isCorrect = index === QUESTIONS[currentQuestion].correct;
+
+    if (isCorrect) {
+      setScore((prev) => prev + 1);
+    }
+
+    setTimeout(() => {
+      if (currentQuestion < QUESTIONS.length - 1) {
+        setCurrentQuestion((prev) => prev + 1);
+        setSelectedAnswer(null);
+      } else {
+        setGameState("end");
+      }
+    }, 1500);
+  };
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden md:max-w-2xl">
+        {gameState === "start" && <StartScreen onStart={handleStart} />}
+        {gameState === "playing" && (
+          <div className="p-8">
+            <Timer timeLeft={timeLeft} />
+            <QuestionCard
+              question={QUESTIONS[currentQuestion]}
+              onAnswerSelect={handleAnswer}
+              selectedAnswer={selectedAnswer}
+              totalQuestions={QUESTIONS.length}
+              currentQuestion={currentQuestion}
+            />
+            <div className="mt-6 text-center text-gray-600">
+              Score: {score}/{QUESTIONS.length}
+            </div>
+          </div>
+        )}
+        {gameState === "end" && (
+          <GameOver
+            score={score}
+            totalQuestions={QUESTIONS.length}
+            onRestart={handleStart}
+          />
+        )}
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    </div>
+  );
 }
 
-export default App
+export default App;
