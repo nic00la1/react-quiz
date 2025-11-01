@@ -71,7 +71,7 @@ function App() {
         totalQuestions={questions.length}
         selectedAnswer={selectedAnswer}
       />
-      <div className="mt-6">
+      <div className="mt-6 min-h-[60px]">
         {showFeedback && (
           <button className="bg-linear-to-r from-indigo-600 to-purple-600 py-3 px-6 rounded-lg font-medium shadow-lg cursor-pointer" onClick={goToNext}>
             {currentQuestion + 1 < questions.length ? "Następne pytanie" : "Zobacz wynik"}
