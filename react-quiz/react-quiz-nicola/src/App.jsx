@@ -40,6 +40,13 @@ function App() {
     setIsFinished(false); // ustawia quiz jako nieukończony
   }
 
+  const calculateProgress = () => {
+    if (isFinished) return 100;
+    const baseProgress = (currentQuestion / questions.length) * 100; // postęp na podstawie ukończonych pytań
+    const questionProgress = selectedAnswer ? (1 / questions.length) * 100 : 0; // dodatkowy postęp, jeśli odpowiedź została udzielona
+    return baseProgress + questionProgress; // całkowity postęp
+  }
+
   return (
     <div className="min-h-screen bg-gray-900 text-white flex flex-col items-center justify-center p-4 space-y-8">
       <div className="text-center">
@@ -47,6 +54,13 @@ function App() {
         <p className="text-gray-400">Sprawdź swoją wiedzę na temat Polski!</p>
       </div>
       
+      <div className="w-full max-w-xl mb-6">
+        <div className="bg-gray-700 h-3 rounded-full overflow-hidden">
+          <div className="h-full bg-linear-to-r from-indigo-600 to-purple-600 duration-500 ease-out transition-all"
+           style={{ width: `${calculateProgress()}%` }}></div>
+        </div>
+      </div>
+
       {!isFinished ? (
         <>
         <QuestionCard 
