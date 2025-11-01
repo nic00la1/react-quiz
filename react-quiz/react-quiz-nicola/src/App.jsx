@@ -43,6 +43,7 @@ function App() {
         showFeedback={showFeedback}
         onAnswer={handleAnswer} 
         data={questions[currentQuestion]} 
+        selectedAnswer={selectedAnswer}
       />
       <div>
         {showFeedback && (
