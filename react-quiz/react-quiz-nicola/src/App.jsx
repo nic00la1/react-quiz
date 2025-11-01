@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Confetti from "react-confetti";
 import QuestionCard from "./components/QuestionCard";
 import { questions } from "./data/questions";
 
@@ -47,9 +48,13 @@ function App() {
     return baseProgress + questionProgress; // całkowity postęp
   }
 
+  const percantege = (score / questions.length) * 100; // oblicza procentowy wynik
+  const showConfetti = isFinished && percantege >= 50; // pokazuje konfetti, jeśli wynik jest 50% lub wyższy
+
   return (
     <div className="min-h-screen bg-gray-900 text-white flex flex-col items-center justify-center p-4 space-y-8">
-      <div className="text-center">
+      {showConfetti && <Confetti />}
+      <div className="text-center mb-8">
         <h1 className="text-4xl font-bold text-purple-600 mb-2">Nicola - Aplikacja Quizów</h1>
         <p className="text-gray-400">Sprawdź swoją wiedzę na temat Polski!</p>
       </div>
