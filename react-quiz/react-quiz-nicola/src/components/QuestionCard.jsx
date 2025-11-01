@@ -1,6 +1,6 @@
 import React from 'react'
 
-const QuestionCard = ({data, onAnswer, showFeedback, selectedAnswer}) => {
+const QuestionCard = ({data, onAnswer, showFeedback, selectedAnswer, currentQuestion, totalQuestions}) => {
     const {question, options, answer} = data;
 
     const getButtonStyle = (option) => {
@@ -15,7 +15,21 @@ const QuestionCard = ({data, onAnswer, showFeedback, selectedAnswer}) => {
 
   return (
     <div className='bg-gray-800 p-6 rounded-2xl shadow-lg w-full max-w-xl border border-gray-700'>
-      <p className='text-xl mb-4'>{question}</p>
+        <div>
+            <h2 className='text-lg font-medium text-gray-300'>
+                Pytanie {currentQuestion + 1} z {totalQuestions}
+            </h2>
+        
+            {/* Pasek postępu */}
+            <span> 
+                {
+                    selectedAnswer 
+                    ? Math.round(((currentQuestion + 1) / totalQuestions * 100)) + "% ukończono" // pokazuje postęp w procentach po udzieleniu odpowiedzi
+                    : Math.round((currentQuestion / totalQuestions) * 100) + "% ukończono" // pokazuje postęp w procentach przed udzieleniem odpowiedzi
+                }
+            </span>
+        </div>
+      <p className='text-xl font-medium mb-6'>{question}</p>
       <div className='grid gap-3'>
         {
             options.map((option, index) => (

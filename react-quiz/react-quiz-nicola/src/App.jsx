@@ -38,11 +38,12 @@ function App() {
         <h1 className="text-4xl font-bold text-purple-600 mb-2">Nicola - Aplikacja Quizów</h1>
         <p className="text-gray-400">Sprawdź swoją wiedzę na temat Polski!</p>
       </div>
-      <p>Wynik: {score}</p>
       <QuestionCard 
         showFeedback={showFeedback}
         onAnswer={handleAnswer} 
         data={questions[currentQuestion]} 
+        currentQuestion={currentQuestion}
+        totalQuestions={questions.length}
         selectedAnswer={selectedAnswer}
       />
       <div>
