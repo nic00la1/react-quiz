@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Confetti from "react-confetti";
 import QuestionCard from "./components/QuestionCard";
 import { questions } from "./data/questions";
@@ -10,6 +10,55 @@ function App() {
   const [isFinished, setIsFinished] = useState(false);
   const [showFeedback, setShowFeedback] = useState(false);
 
+  const audioCtxRef = useRef(null); // referencja do AudioContext, aby uniknąć wielokrotnego tworzenia
+
+  // funkcja do uzyskania lub utworzenia AudioContext
+  const getAudioContext = () => {
+    if (audioCtxRef.current) return audioCtxRef.current;
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    audioCtxRef.current = new AudioContext();
+    return audioCtxRef.current;
+  };
+
+  // funkcja do odtwarzania tonu dźwiękowego
+  const playTone = (frequency = 440, duration = 150, type = "sine", gain = 0.12) => {
+    try {
+      const ctx = getAudioContext();
+      if (ctx.state === "suspended") ctx.resume();
+      const oscillator = ctx.createOscillator();
+      const amplifier = ctx.createGain();
+      oscillator.type = type;
+      oscillator.frequency.value = frequency;
+      amplifier.gain.value = gain;
+      oscillator.connect(amplifier);
+      amplifier.connect(ctx.destination);
+      oscillator.start();
+      setTimeout(() => {
+        try {
+          oscillator.stop();
+          oscillator.disconnect();
+          amplifier.disconnect();
+        } catch (err) {
+          console.warn(err);
+        }
+      }, duration);
+    } catch (e) {
+      console.warn("Audio playback failed:", e);
+    }
+  };
+
+  // funkcja do odtwarzania dźwięku poprawnej odpowiedzi
+  const playCorrectSound = () => {
+    playTone(880, 120, "sine", 0.12);
+    setTimeout(() => playTone(1320, 100, "sine", 0.08), 120);
+  };
+
+  // funkcja do odtwarzania dźwięku błędnej odpowiedzi
+  const playIncorrectSound = () => {
+    playTone(200, 200, "sawtooth", 0.16);
+    setTimeout(() => playTone(140, 140, "sawtooth", 0.12), 160);
+  };
+
   const handleAnswer = (option) => {
     if (showFeedback) return; // zapobiega wielokrotnemu kliknięciu na odpowiedź 
 
@@ -19,6 +68,9 @@ function App() {
     // aktualizacja wyniku, jeśli odpowiedź jest poprawna
     if (option === questions[currentQuestion].answer) {
       setScore(score + 1);
+      playCorrectSound();
+    } else {
+      playIncorrectSound();
     }
   };
 
