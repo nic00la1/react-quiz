@@ -19,7 +19,18 @@ function App() {
     if (option === questions[currentQuestion].answer) {
       setScore(score + 1);
     }
-  }
+  };
+
+  const goToNext = () => {
+    if (currentQuestion + 1 < questions.length) { // sprawdza, czy są jeszcze pytania do wyświetlenia 
+      setCurrentQuestion(currentQuestion + 1); // przechodzi do następnego pytania
+      setSelectedAnswer(null); // resetuje zaznaczoną odpowiedź
+      setShowFeedback(false); // ukrywa informację zwrotną
+    }
+    else {
+      setIsFinished(true); // oznacza, że quiz się zakończył
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-900 text-white flex flex-col items-center justify-center p-4 space-y-8">
@@ -28,7 +39,18 @@ function App() {
         <p className="text-gray-400">Sprawdź swoją wiedzę na temat Polski!</p>
       </div>
       <p>Wynik: {score}</p>
-      <QuestionCard onAnswer={handleAnswer} data={questions[currentQuestion]} />
+      <QuestionCard 
+        showFeedback={showFeedback}
+        onAnswer={handleAnswer} 
+        data={questions[currentQuestion]} 
+      />
+      <div>
+        {showFeedback && (
+          <button onClick={goToNext}>
+            {currentQuestion + 1 < questions.length ? "Następne pytanie" : "Zobacz wynik"}
+          </button>
+        )}
+      </div>
     </div>
   );
 }
