@@ -15,13 +15,13 @@ const QuestionCard = ({data, onAnswer, showFeedback, selectedAnswer, currentQues
 
   return (
     <div className='bg-gray-800 p-6 rounded-2xl shadow-lg w-full max-w-xl border border-gray-700'>
-        <div>
+        <div className='flex justify-between items-center mb-4'>
             <h2 className='text-lg font-medium text-gray-300'>
                 Pytanie {currentQuestion + 1} z {totalQuestions}
             </h2>
         
             {/* Pasek postępu */}
-            <span> 
+            <span className='text-sm bg-gray-700 px-3 py-1 rounded-full'> 
                 {
                     selectedAnswer 
                     ? Math.round(((currentQuestion + 1) / totalQuestions * 100)) + "% ukończono" // pokazuje postęp w procentach po udzieleniu odpowiedzi
